@@ -29,4 +29,18 @@ class RootCoordinatorTests: XCTestCase {
         let correctViewController = navigationController.topViewController as? CharactersTableViewController
         XCTAssertNotNil(correctViewController)
     }
+    
+    func test_DidSelectCalledWithValidCharacter_PresentsDetailsVC() {
+        let mockCharacter = MarvelCharacter(name: "name", description: "description", thumbnail: Thumbnail(path: "path", thumbnailExtension: .jpg))
+        subject.didSelect(character: mockCharacter)
+        let correctViewController = navigationController.topViewController as? CharacterDetailsViewController
+        XCTAssertNotNil(correctViewController)
+    }
+    
+    
+    func test_DidSelectCalledWithNilCharacter_DoesNothing() {
+        subject.didSelect(character: nil)
+        let correctViewController = navigationController.topViewController as? CharacterDetailsViewController
+        XCTAssertNil(correctViewController)
+    }
 }

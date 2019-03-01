@@ -97,6 +97,25 @@ class CharactersTableViewControllerTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
         XCTAssertFalse(UIApplication.shared.isNetworkActivityIndicatorVisible)
     }
+    
+    func test_TappingCell_TellsCoordinator() {
+        let data = CharacterServiceTests.mockData
+        let mockResponseModel = CharacterResponseModel.characterReponseModel(for: data)
+        
+        mockViewModel.characters = mockResponseModel.data.characters
+        let mockDelegate = MockNavigationDelegate()
+        subject.navigationDelegate = mockDelegate
+        subject.viewDidLoad()
+        subject.tableView(subject.tableView, didSelectRowAt: IndexPath(row: 0, section: 0))
+        XCTAssertTrue(mockDelegate.didSelectCalled)
+    }
+}
+
+class MockNavigationDelegate: CharacterNavigationDelegate {
+    var didSelectCalled = false
+    func didSelect(character: MarvelCharacter?) {
+        didSelectCalled = true
+    }
 }
 
 class MockCharacterViewModel: CharactersViewModelProtocol {

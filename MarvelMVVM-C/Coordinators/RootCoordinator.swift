@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol CharacterNavigationDelegate: class {
+    func didSelect(character: MarvelCharacter?)
+}
+
 class RootCoordinator: Coordinator {
 
     var navigationController: UINavigationController
@@ -24,6 +28,15 @@ class RootCoordinator: Coordinator {
     
     func start() {
         let viewController = charactersViewController
+        viewController.navigationDelegate = self
         navigationController.pushViewController(viewController, animated: false)
+    }
+}
+
+extension RootCoordinator: CharacterNavigationDelegate {
+    func didSelect(character: MarvelCharacter?) {
+        guard let character = character else { return }
+        let detailsViewController = CharacterDetailsViewController(character: character)
+        navigationController.pushViewController(detailsViewController, animated: true)
     }
 }

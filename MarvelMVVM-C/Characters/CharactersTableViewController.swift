@@ -16,6 +16,8 @@ enum CharactersTableViewState {
 
 class CharactersTableViewController: UITableViewController {
     
+    weak var navigationDelegate: CharacterNavigationDelegate?
+    
     private let viewModel: CharactersViewModelProtocol
     
     init(viewModel: CharactersViewModelProtocol) {
@@ -81,9 +83,6 @@ extension CharactersTableViewController {
     // MARK: TableView Delegate Methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO: Move to coordinator
-        guard let selectedCharacter = viewModel.characters?[indexPath.row] else { return }
-        let detailsViewController = CharacterDetailsViewController(character: selectedCharacter)
-        navigationController?.pushViewController(detailsViewController, animated: true)
+        navigationDelegate?.didSelect(character: viewModel.characters?[indexPath.row])
     }
 }
