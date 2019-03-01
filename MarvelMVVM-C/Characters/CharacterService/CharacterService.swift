@@ -23,7 +23,7 @@ class CharacterService {
     }
     
     func fetchCharacters(completion: @escaping CharacterServiceCompletion) {
-        if let url = URL(string: URLs.characters) {
+        if let url = Foundation.URL(string: URLs.characters) {
             let request = URLRequest(url: url)
             networkManager.fetch(request: request, completeOnMainThread: false) { [weak self] (data, response, error) in
                 if let data = data {

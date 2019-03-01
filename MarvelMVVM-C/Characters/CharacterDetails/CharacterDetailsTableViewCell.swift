@@ -11,10 +11,12 @@ import UIKit
 class CharacterDetailsTableViewCell: UITableViewCell {
     
     private var didUpdateConstraints = false
+    private var characterDescriptionURL: Foundation.URL?
     
     private let nameLabel: UILabel = UILabel()
     let descriptionLabel: UILabel = UILabel()
     private let characterImageView: UIImageView = UIImageView()
+    private let button = UIButton()
     
     static let reuseIdentifier = "CharacterDetails"
     
@@ -31,14 +33,20 @@ class CharacterDetailsTableViewCell: UITableViewCell {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         characterImageView.translatesAutoresizingMaskIntoConstraints = false
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.addSubview(nameLabel)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(characterImageView)
+        contentView.addSubview(button)
 
         nameLabel.font = UIFont.boldSystemFont(ofSize: 20.0)
         descriptionLabel.numberOfLines = 0
         characterImageView.contentMode = .scaleAspectFit
+        button.setTitle("Go to Website", for: .normal)
+        button.backgroundColor = .blue
+        button.layer.cornerRadius = 4.0
+        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
     
     override func updateConstraints() {
@@ -56,7 +64,10 @@ class CharacterDetailsTableViewCell: UITableViewCell {
                 descriptionLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
                 descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20.0),
                 descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20.0),
-                descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+                button.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 50.0),
+                button.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20.0),
+                button.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20.0),
+                button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
             ]
             NSLayoutConstraint.activate(constraints)
             didUpdateConstraints = true
@@ -67,10 +78,16 @@ class CharacterDetailsTableViewCell: UITableViewCell {
     func update(with character: MarvelCharacter, imageService: CharacterImageService = CharacterImageService()) {
         nameLabel.text = character.name
         descriptionLabel.text = character.description == "" ? "No Description Provided" : character.description
+        characterDescriptionURL = character.descriptionURL
         imageService.fetchImage(request: URLRequest(url: character.imageURL!)) { [weak self] (image, error) in
             guard let image = image else { return }
             self?.characterImageView.image = image
         }
         updateConstraints()
+    }
+    
+    @objc func buttonTapped() {
+        guard let url = characterDescriptionURL else { return }
+        UIApplication.shared.open(url)
     }
 }

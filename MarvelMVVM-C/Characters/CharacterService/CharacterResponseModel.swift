@@ -23,6 +23,7 @@ struct DataClass: Codable {
 struct MarvelCharacter: Codable {
     let name, description: String
     let thumbnail: Thumbnail
+    let urls: [URL]
 }
 
 struct Thumbnail: Codable {
@@ -39,9 +40,26 @@ enum Extension: String, Codable {
     case jpg = "jpg"
 }
 
+struct URL: Codable {
+    let type: URLType
+    let url: String
+}
+
+enum URLType: String, Codable {
+    case comiclink = "comiclink"
+    case detail = "detail"
+    case wiki = "wiki"
+}
+
 extension MarvelCharacter {
-    var imageURL: URL? {
+    var imageURL: Foundation.URL? {
         let urlString = String("\(thumbnail.path).\(thumbnail.thumbnailExtension.rawValue)")
+        return Foundation.URL(string: urlString)
+    }
+    
+    var descriptionURL: Foundation.URL? {
+        let descriptionURL = urls.filter { $0.type == .detail }
+        guard let urlString = descriptionURL.first?.url else { return nil }
         return Foundation.URL(string: urlString)
     }
 }
